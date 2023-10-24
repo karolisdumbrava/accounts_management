@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UsersInput from "./UsersInput";
 
-const UserForm = ({ user, onChange, onSave, creating }) => {
+const UserForm = ({ user, onChange, onSave, onCancel, creating }) => {
     const [userValues, setUserValues] = useState(user);
     const [errors, setErrors] = useState({});
 
@@ -48,6 +48,10 @@ const UserForm = ({ user, onChange, onSave, creating }) => {
         setErrors(newErrors);
     };
 
+    const handleCancel = () => {
+        onCancel();
+    };
+
     const handleInputChange = (fieldName, value) => {
         setUserValues((prevState) => ({
             ...prevState,
@@ -76,7 +80,7 @@ const UserForm = ({ user, onChange, onSave, creating }) => {
     }, [user]);
 
     return (
-        <>
+        <tr className={`${creating ? "h-20 px-2" : ""}`} key={user.id}>
             <td>
                 <UsersInput
                     name="firstName"
@@ -138,7 +142,7 @@ const UserForm = ({ user, onChange, onSave, creating }) => {
                     onValidation={handleValidation}
                 />
             </td>
-            <td>
+            <td className="px-2">
                 <button
                     className={`ml-2 mt-2 ${
                         isSaveDisabled ? "text-gray-400" : "text-green-500"
@@ -149,8 +153,15 @@ const UserForm = ({ user, onChange, onSave, creating }) => {
                 >
                     {creating ? "Create" : "Save"}
                 </button>
+
+                <button
+                    className="ml-2 mt-2 text-red-500"
+                    onClick={handleCancel}
+                >
+                    Cancel
+                </button>
             </td>
-        </>
+        </tr>
     );
 };
 

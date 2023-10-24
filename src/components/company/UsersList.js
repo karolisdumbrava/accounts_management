@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -70,6 +70,12 @@ const UsersList = () => {
         }
     };
 
+    const handleCancelUser = () => {
+        setIsAdding(false);
+        setUserForm(null);
+        setEditingUserId(null);
+    };
+
     if (!companyId) {
         navigate("/");
     }
@@ -84,7 +90,7 @@ const UsersList = () => {
                 Add User
             </button>
             <div className="shadow-lg overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200">
+                <table className="min-w-full divide-y divide-gray-200 table-fixed w-full">
                     <thead className="bg-gray-50">
                         <tr>
                             <th
@@ -133,17 +139,18 @@ const UsersList = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {users?.map((user) => (
-                            <tr key={user.id}>
+                            <Fragment key={user.id}>
                                 {editingUserId === user.id ? (
                                     <UserForm
                                         key={user.id}
                                         user={user}
                                         onChange={handleInputChange}
                                         onSave={handleUpdateUser}
+                                        onCancel={handleCancelUser}
                                         creating={false}
                                     />
                                 ) : (
-                                    <>
+                                    <tr key={user.id}>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                             {user.firstName}
                                         </td>
@@ -180,26 +187,18 @@ const UsersList = () => {
                                                 Delete
                                             </button>
                                         </td>
-                                    </>
+                                    </tr>
                                 )}
-                            </tr>
+                            </Fragment>
                         ))}
                         {isAdding && (
-                            <tr className="align-top">
-                                <td
-                                    className="px-2 py-4"
-                                    colSpan={7}
-                                    style={{ minHeight: "80px" }}
-                                >
-                                    {" "}
-                                    <UserForm
-                                        user={userForm}
-                                        onChange={handleInputChange}
-                                        onSave={handleSaveNewUser}
-                                        creating={true}
-                                    />
-                                </td>
-                            </tr>
+                            <UserForm
+                                user={userForm}
+                                onChange={handleInputChange}
+                                onSave={handleSaveNewUser}
+                                onCancel={handleCancelUser}
+                                creating={true}
+                            />
                         )}
                     </tbody>
                 </table>
